@@ -3,11 +3,10 @@ var router = express.Router();
 const multer = require("multer");
 const fs = require('fs');
 const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 //Backend routes (endpoints)
-
-//const host = "http://3.225.12.137:3001"
-const host = "http://localhost:3001"
+const host = process.env.BASE_URL
 
 // Get the date
 function getDate()
@@ -25,17 +24,8 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-//Addition endpoint
-router.get('/add/:firstNumber/and/:secondNumber', (req,res)=>{
-
-  let firstNo = parseInt(req.params.firstNumber),
-      secondNo = parseInt(req.params.secondNumber);
-  res.json({"addition" : firstNo + secondNo});
-});
-
-
 var mongoose = require('mongoose');
-const uri = 'mongodb+srv://peterbuo:m3x93WLJhWFagQP@inventorysite.lbmkkjb.mongodb.net/?retryWrites=true&w=majority' //atlas
+const uri = process.env.MONGO_URI //atlas
 //const uri = 'mongodb://mongo:27017' //local (docker service)
 
 async function connect(){
@@ -134,8 +124,8 @@ const upload = multer({
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'peters.resume.mailer@gmail.com',
-    pass: 'zqpujsblosgfxnrl',
+    user: process.env.MAILER_USER,
+    pass: process.env.MAILER_PASS,
   },
 });
 
@@ -158,8 +148,8 @@ router.post('/send-email', (req, res) => {
 
   // Email message options
   const mailOptions = {
-    from: 'peters.resume.mailer@gmail.com',
-    to: 'pete.buo@gmail.com',
+    from: process.env.MAILER_USER,
+    to: process.env.MAILER_DEST,
     subject: 'New Message from Contact Form',
     text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
   };
