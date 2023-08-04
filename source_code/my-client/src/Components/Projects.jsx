@@ -126,8 +126,6 @@ const Projects = (props) => {
     // View the selected project when clicked
     function viewProject(project)
     {
-        // Store the clicked project's id in session storage to pass it as a prop to the component.
-        //sessionStorage.setItem('project', JSON.stringify(project))
         navigate('/projects/'+project.title.replace(/\s/g, '').toLowerCase());
 
     }
@@ -239,7 +237,6 @@ const Projects = (props) => {
                 // I need to update the session token
                 
                 project.current = proj
-                //sessionStorage.setItem('project', JSON.stringify(proj))
                 getProjects();
         
             })
