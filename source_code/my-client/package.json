@@ -12,6 +12,7 @@
     "env-cmd": "^10.1.0",
     "mime": "^3.0.0",
     "mongodb": "^5.1.0",
+    "quill-video-embed": "^0.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-fs": "^0.0.0",

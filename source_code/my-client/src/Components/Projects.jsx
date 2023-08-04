@@ -8,6 +8,7 @@ import FormData from 'form-data';
 
 // React quill import
 import ReactQuill from "react-quill"
+import 'quill-video-embed';
 import 'react-quill/dist/quill.snow.css'
 
 const Projects = (props) => {
@@ -19,13 +20,18 @@ const Projects = (props) => {
     const [convertedText, setConvertedText] = useState(defaultBlogHtml);
     const [projectHtml, setProjectHtml] = useState(defaultProjectHtml);
     const toolbarOptions = [
-        [{ header: [1, 2, false] }],
-        ['bold', 'italic', 'underline'],
-        ['image', 'code-block']
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ list: 'bullet' }, { list: 'ordered' }],
+        [{ align: [] }],
+        [{ color: [] }],
+        ['image', 'video', 'link'],
+        [{ script: 'sub' }, { script: 'super' }, 'formula'],
       ];
 
     const [post, setPost] = useState()
-    const [project, setProject] = useState()
+    const [project, setProject] = useState(null)
     const [projectComponents, setProjectComponents] = useState();
     const host = props.host
     const { projectId } = useParams();
@@ -44,12 +50,26 @@ const Projects = (props) => {
 
         if (projectId)
         {
-            // Set the project reference - its old.. session storage not yet set
-            let new_project = JSON.parse(sessionStorage.getItem('project'))
-            setProject(new_project)
-            // Inject the html content
-            document.getElementById('projectHtml').innerHTML = new_project.html
+            // Clear the previous project
             
+            // Ask the server to find the closest matching project for us
+            axios.get(`${host}/findProject/${projectId}`)
+            .then((response) => {
+                setProject(response.data);
+              })
+            .catch((res) => {
+                console.log(res)
+            })
+            
+            
+        }
+        else{
+            // When we are on the project navigation page, we must clear the previously viewed project. This is because
+            // Once the component mounts, for a brief moment, it will try to load the previous project if it is valid before
+            // the state updates. This causes the old project to be passed to the blog before the new project content
+            // is loaded, causing the state to be out of date by one render. This solves that by making sure the old project
+            // is removed from memory before the state updates when clicking on the new project.
+            setProject(null)
         }
     
         return () => {
@@ -107,7 +127,7 @@ const Projects = (props) => {
     function viewProject(project)
     {
         // Store the clicked project's id in session storage to pass it as a prop to the component.
-        sessionStorage.setItem('project', JSON.stringify(project))
+        //sessionStorage.setItem('project', JSON.stringify(project))
         navigate('/projects/'+project.title.replace(/\s/g, '').toLowerCase());
 
     }
@@ -123,7 +143,7 @@ const Projects = (props) => {
         document.getElementById('description').value = ''
         document.getElementById('image').value = ''
 
-        setProject(null)
+        setProject(null);
         setProjectHtml(defaultProjectHtml)
     }
 
@@ -169,7 +189,7 @@ const Projects = (props) => {
             im = document.getElementById('image').files[0]
         }
         else{
-            im = project.icon
+            im = project.current.icon
         }
         
             
@@ -200,14 +220,14 @@ const Projects = (props) => {
         }
         else // editing
         {
-            let proj = {id: project.id, title: document.getElementById('title_editProject').value, date:project.date, description: document.getElementById('description_editProject').value, icon: im, html: projectHtml}
+            let proj = {id: project.current.id, title: document.getElementById('title_editProject').value, date:project.current.date, description: document.getElementById('description_editProject').value, icon: im, html: projectHtml}
 
             // Update the HTML on the page
             document.getElementById('projectHtml').innerHTML = projectHtml
             form.set('title', document.getElementById('title_editProject').value)
             form.set('description', document.getElementById('description_editProject').value)
             
-            form.set('id', project.id)
+            form.set('id', project.current.id)
             await axios.post(`${host}/editProject`, form,   
             {
                 headers: {
@@ -218,8 +238,8 @@ const Projects = (props) => {
             .then(function (response) {
                 // I need to update the session token
                 
-                setProject(proj)
-                sessionStorage.setItem('project', JSON.stringify(proj))
+                project.current = proj
+                //sessionStorage.setItem('project', JSON.stringify(proj))
                 getProjects();
         
             })
@@ -292,19 +312,19 @@ const Projects = (props) => {
     }
 
     // UI FOR SPECIFIC PROJECT PAGE
-    if (projectId)
+    if (projectId && project)
     {
         return(
             <>
-            <h3 onClick= {editProject} style={{display: "inline", cursor: 'pointer', fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>{JSON.parse(sessionStorage.getItem('project')).title.toUpperCase()}</h3>
+            <h3 onClick= {sessionStorage.getItem('admin') === 'true' ? editProject: null} style={{display: "inline", cursor: 'pointer', fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>{project.title.toUpperCase()}</h3>
 
             {/* Inject project html here */}
-            <div id = "projectHtml"></div>
+            <div class = 'ql-editor'id = "projectHtml" style = {{width: '80%'}} dangerouslySetInnerHTML={{ __html: project.html }}></div>
 
 
             {/* To the right side we need to display this blog */}
             <div id = "blog">
-                <Blog ref = {BlogRef} viewPost = {viewPost} newPost = {newPostClicked} host = {host} project = {JSON.parse(sessionStorage.getItem('project'))}></Blog>
+                <Blog ref = {BlogRef} viewPost = {viewPost} newPost = {newPostClicked} host = {host} project={project}></Blog>
             </div>
 
             {/* New post modal */}
@@ -346,7 +366,7 @@ const Projects = (props) => {
 
                     <div class="header">
                         <div class="left-section">
-                            <span id="editIcon" class="icon" onClick={editPost}>Edit</span>
+                            <span id="editIcon" class="icon" onClick={editPost} style={{display: sessionStorage.getItem('admin') === 'true' ? 'inline-block': 'none'}}>Edit</span>
                         </div>
                         <div class="right-section">
                             <span id="closeIcon" class="icon" onClick={closeViewModal}>Close</span>
@@ -359,7 +379,7 @@ const Projects = (props) => {
                         <p style={{ marginTop: '2px', fontWeight: '100'}}>{post?.date}</p>
                     </div>
                     <hr></hr>
-                    <div id = "postContent">
+                    <div class = 'ql-editor' id = "postContent">
                         {/* Content injected here */}
                     </div>
                 </div>
@@ -397,6 +417,7 @@ const Projects = (props) => {
                             style={{minHeight: '200px', marginTop: '5px'}}
                             modules={{
                                 toolbar: toolbarOptions
+                                
                             }}
                         />
                     
@@ -409,7 +430,7 @@ const Projects = (props) => {
     }
 
     // UI FOR PROJECT NAVIGATION MENU
-    return(
+    else return(
     <div>
         <h3 style={{fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>PETER BUONAIUTO</h3>
 

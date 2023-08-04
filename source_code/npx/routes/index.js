@@ -81,6 +81,7 @@ const User = mongoose.model('User', userSchema);
 //Schema for project
 const projectSchema = new mongoose.Schema({
   title: String,
+  searchtitle: String,
   date: String,
   description: String,
   html: String,
@@ -137,6 +138,19 @@ const transporter = nodemailer.createTransport({
     pass: 'zqpujsblosgfxnrl',
   },
 });
+
+// Find project by url
+router.get('/findProject/:id', (req, res) => {
+
+  Project.findOne({ searchtitle: { $regex: new RegExp(req.params.id.toLowerCase(), 'i') } })
+  .then((foundDocument) => {
+    res.json(foundDocument)
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+})
 
 // Route to handle email sending
 router.post('/send-email', (req, res) => {
@@ -262,6 +276,7 @@ function addProject(req, res)
   let date = getDate()
 
   let title = req.body.title;
+  let searchtitle = req.body.title.replace(/\s/g, '').toLowerCase();
   let description = req.body.description
   let icon = (req.files.length > 0) ? host+"/images/"+req.files[0].filename: ""
   let html = req.body.html
@@ -269,6 +284,7 @@ function addProject(req, res)
 
   const proj = new Project({
     title: title,
+    searchtitle: searchtitle,
     date: date,
     description: description,
     html: html,
@@ -288,6 +304,7 @@ async function editProject(req, res)
 {
 
   let title = req.body.title;
+  let searchtitle = req.body.title.replace(/\s/g, '').toLowerCase();
   let description = req.body.description
   let icon = (req.files.length > 0) ? host+"/images/"+req.files[0].filename: ""
   let html = req.body.html
@@ -299,6 +316,7 @@ async function editProject(req, res)
   let old_icon = proj.icon
 
   proj.html = html
+  proj.searchtitle = searchtitle
   proj.title = title
   proj.icon = icon? icon: old_icon
   proj.description = description
@@ -526,7 +544,14 @@ router.get('/getPosts/:project_id', (req, res) => {
             text: postResult.text,
           }))
           .catch((error) => {
-            console.error('Error finding post:', error);
+            // The post cant be found, so it was probably deleted. Remove the post id from the array
+            Project.updateOne({ _id: id }, { $pull: { posts: postId } })
+            .then((result) => {
+              console.log(`Successfully removed post ${postId} from the array. It was previously deleted manually from the database.`);
+            })
+            .catch((error) => {
+              console.error(`Error while removing post ${postId} from the array:`, error);
+            });
             
           })
       );

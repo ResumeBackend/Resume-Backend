@@ -20,7 +20,7 @@ const Blog = forwardRef((props, ref) => {
     // For each one, get the database item (post) and add it's metadata to the array.
     async function fetchPosts()
     {
-        await axios.get(`${host}/getPosts/${project.id}`)
+        await axios.get(`${host}/getPosts/${project._id}`)
         .then((response) => {
             
             let posts = response.data
@@ -42,7 +42,7 @@ const Blog = forwardRef((props, ref) => {
     // TODO: Call this to add a new post, which will refresh after
     async function addPost(title, text) // date calculated in API
     {
-        const post = {title: title, text: text, project_id: project.id}
+        const post = {title: title, text: text, project_id: project._id}
         await axios.post(`${host}/addPost`, post)
         .then(function (response) {
         //finally...

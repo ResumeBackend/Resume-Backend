@@ -92,7 +92,7 @@ const Welcome = (props) => {
             <div style = {{display: 'flex'}}>
                 <div style = {{borderRight: '1px solid gray', paddingRight: '20px'}}>
                     <ul class="skills">
-                        <li><p class = 'skill-listing' onClick={(e) => {setSkill(leadership); setActive(e.currentTarget)} }>Leadership</p></li>
+                        <li><p class = 'skill-listing active' onClick={(e) => {setSkill(leadership); setActive(e.currentTarget)} }>Leadership</p></li>
                         <li><p class = 'skill-listing' onClick={(e) => {setSkill(interpersonal); setActive(e.currentTarget)}}>Interpersonal</p></li>
                         <li><p class = 'skill-listing' onClick={(e) => {setSkill(adaptability); setActive(e.currentTarget)}}>Adaptability</p></li>
                         <li><p class = 'skill-listing' onClick={(e) => {setSkill(timemanagement); setActive(e.currentTarget)}}>Time Management</p></li>
