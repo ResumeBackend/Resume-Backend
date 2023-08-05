@@ -292,15 +292,13 @@ function addProject(req, res)
 router.post('/editProject', upload.array("image"), editProject);
 async function editProject(req, res)
 {
-
   let title = req.body.title;
-  let searchtitle = req.body.title.replace(/\s/g, '').toLowerCase();
+  let searchtitle = title.replace(/\s/g, '').toLowerCase();
   let description = req.body.description
   let icon = (req.files.length > 0) ? host+"/images/"+req.files[0].filename: ""
   let html = req.body.html
   let id = req.body.id
-
-
+  
   const proj = await Project.findOne({_id: id});
 
   let old_icon = proj.icon

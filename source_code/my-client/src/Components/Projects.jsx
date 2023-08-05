@@ -30,6 +30,7 @@ const Projects = (props) => {
         [{ script: 'sub' }, { script: 'super' }, 'formula'],
       ];
 
+
     const [post, setPost] = useState()
     const [project, setProject] = useState(null)
     const [projectComponents, setProjectComponents] = useState();
@@ -87,7 +88,7 @@ const Projects = (props) => {
             let projects= []
             response.data.forEach((project, index) => 
             {
-                projects.push({id: project._id, title: project.title, date:project.date, description: project.description, icon: project.icon, html: project.html})
+                projects.push({_id: project._id, title: project.title, date:project.date, description: project.description, icon: project.icon, html: project.html})
             })
             
             refreshList(projects); // Populate the list with our items array from DB
@@ -187,7 +188,7 @@ const Projects = (props) => {
             im = document.getElementById('image').files[0]
         }
         else{
-            im = project.current.icon
+            im = project.icon
         }
         
             
@@ -218,14 +219,13 @@ const Projects = (props) => {
         }
         else // editing
         {
-            let proj = {id: project.current.id, title: document.getElementById('title_editProject').value, date:project.current.date, description: document.getElementById('description_editProject').value, icon: im, html: projectHtml}
+            let proj = {_id: project._id, title: document.getElementById('title_editProject').value, date:project.date, description: document.getElementById('description_editProject').value, icon: im, html: projectHtml}
 
             // Update the HTML on the page
             document.getElementById('projectHtml').innerHTML = projectHtml
             form.set('title', document.getElementById('title_editProject').value)
             form.set('description', document.getElementById('description_editProject').value)
-            
-            form.set('id', project.current.id)
+            form.set('id', project._id)
             await axios.post(`${host}/editProject`, form,   
             {
                 headers: {
@@ -234,15 +234,12 @@ const Projects = (props) => {
                 },
                 })
             .then(function (response) {
-                // I need to update the session token
-                
-                project.current = proj
+                setProject(proj)
                 getProjects();
         
             })
             .catch(function (response) {
-            //handle error
-            console.log(response);
+                console.log(response)
             });
         }
         
@@ -276,6 +273,7 @@ const Projects = (props) => {
         {
             if (BlogRef.current) {
                 BlogRef.current.editPost(title, convertedText, post.id);
+                BlogRef.current.fetchPosts();
               }
         }
         
@@ -316,7 +314,7 @@ const Projects = (props) => {
             <h3 onClick= {sessionStorage.getItem('admin') === 'true' ? editProject: null} style={{display: "inline", cursor: 'pointer', fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>{project.title.toUpperCase()}</h3>
 
             {/* Inject project html here */}
-            <div class = 'ql-editor'id = "projectHtml" style = {{width: '80%'}} dangerouslySetInnerHTML={{ __html: project.html }}></div>
+            <div class = 'ql-editor'id = "projectHtml" style = {{width: '80%'}} dangerouslySetInnerHTML={{ __html: project.html.replace('/inventory" rel="noopener noreferrer" target="_blank"', '/inventory" rel="noopener noreferrer" target="_self"') }}></div>
 
 
             {/* To the right side we need to display this blog */}

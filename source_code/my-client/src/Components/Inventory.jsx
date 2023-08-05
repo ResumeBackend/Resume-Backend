@@ -379,9 +379,10 @@ const Inventory = (props) => {
 
     return (
     // MAIN VIEW PAGE
-
+    <><h3 style={{display: "inline", fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>ONLINE INVENTORY SYSTEM</h3>
     
-    <div id = "content-border">
+    
+    <div id = "content-border" style = {{position: 'relative', top:'-3rem'}}>
 
         <div className="card border-secondary mb-3" id = "page-view">
             <div className="card-header"><NavBar token = {props.token} mode="0" newItem={newItem} updateFilter={updateFilter} showPage={showPage} refreshDB={getItems}></NavBar></div>
@@ -443,7 +444,7 @@ const Inventory = (props) => {
             </div>
         </div>
     </div>
-    
+    </>
   
 
     )

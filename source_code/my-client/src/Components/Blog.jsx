@@ -78,7 +78,7 @@ const Blog = forwardRef((props, ref) => {
     }
 
     useImperativeHandle(ref, () => ({
-        addPost, editPost
+        addPost, editPost, fetchPosts
       }));
     
 
