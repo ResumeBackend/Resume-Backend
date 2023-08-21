@@ -1,12 +1,14 @@
 var express = require('express');
 var router = express.Router();
 const multer = require("multer");
+const path = require('path');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 //Backend routes (endpoints)
 const host = process.env.BASE_URL
+router.use(express.static(path.join(__dirname, '../public')));
 
 // Get the date
 function getDate()
@@ -127,6 +129,12 @@ const transporter = nodemailer.createTransport({
     user: process.env.MAILER_USER,
     pass: process.env.MAILER_PASS,
   },
+});
+
+// Download resume
+router.get('/download/resume.pdf', (req, res) => {
+  const filePath = path.join(__dirname, '../public/resume.pdf');
+  res.download(filePath);
 });
 
 // Find project by url

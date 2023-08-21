@@ -427,7 +427,7 @@ const Projects = (props) => {
     // UI FOR PROJECT NAVIGATION MENU
     else return(
     <div>
-        <h3 style={{fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>PETER BUONAIUTO</h3>
+        <h3 style={{display: 'inline', fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>PETER BUONAIUTO</h3>
 
         {/* Admins get a new project button */}
         <div id="newproject" style={{ top: '-2rem', position: 'relative', width: '100%', float:'right', display: sessionStorage.getItem('admin') === 'true' ? "inline-block" : "none" }}>

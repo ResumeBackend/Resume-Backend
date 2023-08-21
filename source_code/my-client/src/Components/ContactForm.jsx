@@ -38,7 +38,7 @@ const ContactForm = (props) => {
         <div >
             <form onSubmit={handleSubmit}>
             <input style = {{margin:'5px'}}type="text" class='form-control  'value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required />
-            <input style = {{margin:'5px'}}type="email" class='form-control  'value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
+            <input style = {{margin:'5px'}}type="email" class='form-control  'value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)"/>
             <textarea style = {{margin:'5px', height: '200px'}}class='form-control  'value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Your message" required />
             <button type="submit" class="btn btn-light">Send Message</button>
             </form>

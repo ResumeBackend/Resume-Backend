@@ -61,8 +61,11 @@ fetch(raw)
     </BrowserRouter>
     <div id = 'socials'>
       <hr></hr>
-      <a href="https://github.com/peterb2396" target="_blank" rel="noreferrer">
+      <a class = 'social' href="https://github.com/peterb2396" target="_blank" rel="noreferrer">
         <img src="github.png"  width = "30px"alt = "github"></img>
+      </a>
+      <a class = 'social' href="https://www.instagram.com/built.by.peter/" target="_blank" rel="noreferrer">
+        <img src="insta.png"  width = "30px"alt = "github"></img>
       </a>
     </div>
     </>

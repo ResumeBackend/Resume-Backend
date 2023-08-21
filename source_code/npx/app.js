@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+const bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var path = require('path');
@@ -10,6 +11,9 @@ var indexRouter = require('./routes/index');
 
 var app = express();
 app.use(cors());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

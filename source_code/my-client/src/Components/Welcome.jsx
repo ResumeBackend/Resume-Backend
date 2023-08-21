@@ -21,6 +21,27 @@ const Welcome = (props) => {
         })
     }
 
+    // Download Resume
+    const handleDownload = async () => {
+        try {
+          const response = await axios.get('http://localhost:3001/download/resume.pdf', {
+            responseType: 'blob', // Treat response as binary data
+          });
+    
+          // Create a URL for the blob response and initiate download
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'resume.pdf');
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        } catch (error) {
+          console.error('Error downloading file:', error);
+        }
+    }
+    
+
     // activate the given skill <p>
     function setActive(clickedElement) {
         // Remove the "active" class from all nav-links
@@ -106,9 +127,10 @@ const Welcome = (props) => {
 
             </div>
 
-            
+            <button style= {{float: 'right'}}type="button" className="btn btn-outline-primary" onClick = {handleDownload}>Download Resume</button>
 
         </div>
+        
 
     </div>
 
