@@ -51,7 +51,6 @@ async function connect(){
 connect();
 
 // Set up DB!
-
 // My schema can also have methods if i want.... such as displayDetails.
 const itemSchema = new mongoose.Schema({
   name: String,
