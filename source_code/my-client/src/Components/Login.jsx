@@ -44,7 +44,7 @@ export default function Login(props) {
             if (response.data.authenticated)
             {
                 error("success!")
-                props.setToken(response.data.username)
+                props.setToken(response.data.username, response.data.id)
                 sessionStorage.setItem('admin', response.data.admin);
                 navigate('/');
                 window.location.reload()
@@ -56,6 +56,7 @@ export default function Login(props) {
           })
           .catch(function (response) {
             //handle error
+            error("Wrong password")
             console.log(response);
           });
 
@@ -72,7 +73,7 @@ export default function Login(props) {
 
         await axios.post(`${host}/signup`, data)
           .then(function (response) {
-            props.setToken(response.data.username)
+            props.setToken(response.data.username, response.data.id)
             // After signing up we log in (set the token) and navigate back to the home page
             navigate('/');
             window.location.reload()

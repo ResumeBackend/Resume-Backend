@@ -1,33 +1,14 @@
-import React from "react";
+import React, {useState} from "react";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Account = (props) => 
 {
     const host = props.host
+    const [username, setUsername] = useState(props.token())
 
     const navigate = useNavigate();
-    loadAccount() // fetch current details
-
-    function loadAccount()
-    {
-        // fetch current username and password, store them if empty (component mounting)
-        if (!document.getElementById("passwordInput")?.value && !document.getElementById("usernameInput")?.value && props.token())
-        {
-            let data = {'username': props.token()}
-            
-            axios.post(`${host}/get-password`, data) //post the username, get the password
-            .then(function (response) {
-                document.getElementById("passwordInput").value = response.data.password // display current password
-                document.getElementById("usernameInput").value = props.token()
-            })
-            .catch(function (response) {
-                //handle error
-                console.log(response);
-            });
-        }
-    }
-
+  
     //update DB and user token on session storage
     function updateAccount()
     {
@@ -35,7 +16,7 @@ const Account = (props) =>
         let newUsername = document.getElementById("usernameInput").value
         let oldUsername = props.token()
         
-        props.setToken(newUsername)
+        props.setToken(newUsername, null)
 
         let data = {'username': newUsername, 'password': newPassword, 'oldUsername': oldUsername}
 
@@ -56,26 +37,26 @@ const Account = (props) =>
     function validateData()
 
     {
+        
         let valid = true
         // return false if no password is present
-        if (! document.getElementById("passwordInput").value || ! document.getElementById("usernameInput").value)
+        if (! document.getElementById("passwordInput").value || ! username)
             valid = false
 
         if (valid) // entries are syntactically good...
         {
-            // Now, we must check and make sure the username is available
-            let username = document.getElementById("usernameInput").value
+            console.log('hey')
             let data = {'username': username}
             let myname = props.token()
             // we need to check the database for this username
             axios.post(`${host}/getUser`, data)
             .then(function (response) {
                 
-                if (!response.data["exists"] || username === myname) // Username available! Or, its my username!
+                if ((!response.data["exists"] || username === myname) && username.length > 0) // Username available! Or, its my username!
                 {
                     document.getElementById('login-btn').disabled = false;
                     document.getElementById("errorMsg").style.display = "none"
-                      
+                    console.log(username)
                 }
                 else
                 {
@@ -110,6 +91,12 @@ const Account = (props) =>
         obj.type = 'password';
       }
 
+    // change username
+    const handleNameChange = (e) => {
+        setUsername(e.target.value);
+        validateData()
+      };
+
 
 
     return(
@@ -122,7 +109,7 @@ const Account = (props) =>
                 <form>
                     <div className="form-group">
                         <label style = {{marginLeft:'5px'}}>Username</label>
-                        <input style = {{margin:'5px'}} type="text" className="form-control" onInput={validateData} id="usernameInput"  placeholder="Enter username"></input>
+                        <input style = {{margin:'5px'}} type="text" value ={username} className="form-control" onInput={handleNameChange} id="usernameInput"  placeholder="Enter username"></input>
                     </div>
 
                     <div className="form-group">
@@ -135,7 +122,7 @@ const Account = (props) =>
                     <p id = "errorMsg">Error msg</p>
 
                     <div style = {{margin:'5px', display:'flex', justifyContent:'space-between'}}>
-                        <button type="button" className="btn btn-outline-secondary" id = "login-btn" onClick = {logout}>Logout</button>
+                        <button type="button" className="btn btn-outline-secondary" id = "logout" onClick = {logout} disabled = {sessionStorage.getItem('id') == null}>Logout</button>
                         <button style = {{marginRight:'-10px'}}type="button" className="btn btn-outline-primary" id = "login-btn" onClick = {updateAccount}>Update</button>
 
                         

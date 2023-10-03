@@ -1,13 +1,7 @@
-/**
- * Notes:
- * 
- * Welcome page should have text as main content, more resume style. Clean up the left side with bullet points
- * Page for video games (chicken duty, insider)
- * Page for applications (biggest loser, iphone app, 3D model app)
- * Page for web projects (doc xtract!): Video demo, brief introduction paragraph, then get technical (for all pages)
- */
+
 
 import Welcome from './Components/Welcome.jsx'
+import Upload from './Components/Upload.jsx';
 import Inventory from "./Components/Inventory.jsx";
 import Login from "./Components/Login.jsx";
 import Account from './Components/Account.jsx';
@@ -31,13 +25,16 @@ fetch(raw)
   setHost(copy)
 });
 
-  function setToken(userToken) {
+  // store username and id locally.. username for display, id for auth
+  function setToken(username, id) {
     // Store the username as a token to display and allow logged-in-features
-    sessionStorage.setItem('token', userToken);
+    sessionStorage.setItem('username', username);
+    sessionStorage.setItem('id', id);
   }
   
+  // Get token: Returns the username token (not the id)
   function getToken() {
-    return sessionStorage.getItem('token');
+    return sessionStorage.getItem('username');
   }
 
 
@@ -57,6 +54,7 @@ fetch(raw)
           <Route path="contact" element={<ContactForm host = {host}/>} />
           <Route path="projects" element={<Projects host = {host}/>} />
           <Route path="projects/:projectId" element={<Projects host = {host} project = {JSON.parse(sessionStorage.getItem('project'))}/>} />
+          <Route path = "upload" element = {(sessionStorage.getItem('admin') === "false")? (<Welcome token = {getToken} host = {host}/>): <Upload host = {host}/>}/>
       </Routes>
     </BrowserRouter>
     <div id = 'socials'>
@@ -65,7 +63,7 @@ fetch(raw)
         <img src="github.png"  width = "30px"alt = "github"></img>
       </a>
       <a class = 'social' href="https://www.instagram.com/built.by.peter/" target="_blank" rel="noreferrer">
-        <img src="insta.png"  width = "30px"alt = "github"></img>
+        <img src="insta.png"  width = "30px"alt = "instagram"></img>
       </a>
     </div>
     </>

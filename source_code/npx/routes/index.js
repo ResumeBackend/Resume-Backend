@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const multer = require("multer");
 const path = require('path');
+const bcrypt = require('bcrypt');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
@@ -26,13 +27,17 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+
+
 var mongoose = require('mongoose');
 const uri = process.env.MONGO_URI //atlas
+var content_db
 //const uri = 'mongodb://mongo:27017' //local (docker service)
 
 async function connect(){
   try {
     await mongoose.connect(uri)
+    content_db = mongoose.connection.collection('content');
     console.log("Connected to mongoDB")
     
 
@@ -108,6 +113,17 @@ const multerStorage = multer.diskStorage({
   },
 });
 
+const resumeStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public');
+  },
+  filename: (req, file, cb) => {
+    cb(null, 'resume_peter_buonaiuto.pdf'); 
+  },
+});
+
+const uploadResume = multer({ storage: resumeStorage });
+
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.split("/")[1] === "png" || file.mimetype.split("/")[1] === "jpg" || file.mimetype.split("/")[1] === "jpeg") {
     cb(null, true);
@@ -132,8 +148,8 @@ const transporter = nodemailer.createTransport({
 });
 
 // Download resume
-router.get('/download/resume.pdf', (req, res) => {
-  const filePath = path.join(__dirname, '../public/resume.pdf');
+router.get('/download/resume', (req, res) => {
+  const filePath = path.join(__dirname, '../public/resume_peter_buonaiuto.pdf');
   res.download(filePath);
 });
 
@@ -149,6 +165,37 @@ router.get('/findProject/:id', (req, res) => {
   });
 
 })
+
+// Get data to display on webpage
+router.get('/getData', (req, res) => {
+
+  // Query the database to find relevant items
+  content_db.find({}).toArray()
+  .then(data => {
+    res.status(200)
+    res.json(data)
+  })
+  .catch(error => {
+    console.error(error);
+    
+    res.status(500)
+    res.json("Error loading content")
+  });
+
+
+})
+
+// uplaod resume
+router.post('/uploadResume', uploadResume.single('resume'), (req, res) => {
+  // The file is saved as "resume_peter_buonaiuto.pdf" in the "public" folder
+  if (req.body.id != process.env.SECRET)
+  {
+    res.status(403)
+    res.json("UNAUTHORIZED")
+    return
+  }
+  res.json({ message: 'File uploaded successfully' });
+});
 
 // Route to handle email sending
 router.post('/send-email', (req, res) => {
@@ -178,11 +225,23 @@ router.post('/login', login);
 
 function login(req, res)
 {
-  User.find({'username': req.body.username, 'password': req.body.password})
+  User.find({'username': req.body.username})
   .then(function(value) {
     if (value.length === 1)
     {
-      res.json({'authenticated': true, 'username': value[0].username, 'admin': value[0].admin})
+      bcrypt.compare(req.body.password, value[0].password, (err, result) => {
+        if (err) {
+          console.error('Error comparing passwords:', err);
+          res.status(500)
+          res.json({'authenticated': false})
+        } else if (result) {
+          res.json({'authenticated': true, 'username': value[0].username, 'admin': value[0].admin, 'id': value[0]._id})
+        } else {
+          res.status(401)
+          res.json({'authenticated': false})
+        }
+      });
+      
     }
     else
     {
@@ -198,13 +257,22 @@ router.post('/signup', signup);
 
 function signup(req, res)
 {
+  bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+    if (err) {
+      res.status(500)
+      res.json("Could not hash password")
+    } else {
 
-  const newUser = new User({'username': req.body.username, 'password': req.body.password, 'admin': false})
-    newUser.save().then(function(value) 
-    {
-      // THIS IS THE RESPONSE THE CLIENT WILL GET!
-      res.json({username: value.username}) 
-    })
+      const newUser = new User({'username': req.body.username, 'password': hashedPassword, 'admin': false})
+      newUser.save().then(function(value) 
+      {
+        // THIS IS THE RESPONSE THE CLIENT WILL GET!
+        res.json({username: value.username, id: value._id}) 
+      })
+      
+    }
+  });
+  
 }
 
 router.post('/update-account', updateAccount);
@@ -212,36 +280,25 @@ router.post('/update-account', updateAccount);
 // Update this account username and password
 function updateAccount(req, res)
 {
-  User.findOneAndUpdate({'username': req.body.oldUsername}, {'username': req.body.username, 'password': req.body.password})
-    .then(function(value) 
+  bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+    if (err) {
+      res.status(500)
+      res.json("Could not hash password")
+    }
+    else
     {
-      // THIS IS THE RESPONSE THE CLIENT WILL GET!
-      res.json({ id: value?._id}) 
-    })
+
+      User.findOneAndUpdate({'username': req.body.oldUsername}, {'username': req.body.username, 'password': hashedPassword})
+      .then(function(value) 
+      {
+        // THIS IS THE RESPONSE THE CLIENT WILL GET!
+        res.json({ id: value?._id}) 
+      })
+
+    }})
+  
 }
 
-
-
-// given username get password
-router.post('/get-password', getPassword)
-function getPassword(req, res)
-{
-  User.findOne({'username': req.body.username})
-  .then(function(value) {
-    res.json({'password': value?.password})
-  })
-}
-
-
-// given username get id
-router.post('/get-id', getId)
-function getId(req, res)
-{
-  User.findOne({'username': req.body.username})
-  .then(function(value) {
-    res.json({'id': value?._id})
-  })
-}
 
 // given id get name
 router.post('/get-name', getName)
@@ -271,6 +328,13 @@ function getUser(req, res)
 router.post('/addProject', upload.array("image"), addProject);
 function addProject(req, res)
 {
+  let token = req.body.token
+  if (token != process.env.SECRET)
+  {
+    res.status(403)
+    res.json("Unauthorized")
+    return
+  }
   let date = getDate()
 
   let title = req.body.title;
@@ -300,6 +364,14 @@ function addProject(req, res)
 router.post('/editProject', upload.array("image"), editProject);
 async function editProject(req, res)
 {
+  let token = req.body.token
+  if (token != process.env.SECRET)
+  {
+    res.status(403)
+    res.json("Unauthorized")
+    return
+  }
+
   let title = req.body.title;
   let searchtitle = title.replace(/\s/g, '').toLowerCase();
   let description = req.body.description
@@ -333,6 +405,14 @@ async function editProject(req, res)
 router.post('/addPost', addPost);
 function addPost(req, res)
 {
+  let token = req.body.token
+  if (token != process.env.SECRET)
+  {
+    res.status(403)
+    res.json("Unauthorized")
+    return
+  }
+
   let date = getDate()
 
   let title = req.body.title;
@@ -371,6 +451,13 @@ function addPost(req, res)
 router.post('/editPost', editPost);
 async function editPost(req, res)
 {
+  let token = req.body.token
+  if (token != process.env.SECRET)
+  {
+    res.status(403)
+    res.json("Unauthorized")
+    return
+  }
 
   let title = req.body.title;
   let text = req.body.text

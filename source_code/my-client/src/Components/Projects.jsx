@@ -179,7 +179,7 @@ const Projects = (props) => {
     {
         let form = new FormData()
         form.set('image', document.getElementById('image').files[0])
-        
+        form.set('token', sessionStorage.getItem('id')) // for auth
         form.set('html', projectHtml)
 
         let im = ""

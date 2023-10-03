@@ -35,12 +35,7 @@ const Inventory = (props) => {
     // used to note them as the author when posting
     function storeID()
     {
-        let data = {'username': props.token()}
-
-        axios.post(`${host}/get-id`, data)
-        .then(function (response) {
-            setid(response.data.id) 
-        })
+        setid(sessionStorage.getItem('id'))
     }
 
     //get the username of the creator of this item
