@@ -8,9 +8,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      port: 3000
-      MONGODB_URI: "mongodb://mongo_db:27017"
     depends_on:
       - mongo
 
