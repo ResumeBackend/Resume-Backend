@@ -8,19 +8,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    depends_on:
-      - mongo
+    # depends_on:
+    #   - mongo
 
-  mongo:
-    image: mongo:latest
-    restart: unless-stopped
-    # environment:
-    #   - MONGO_INITDB_ROOT_USERNAME=root
-    #   - MONGO_INITDB_ROOT_PASSWORD=123456
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
+  # mongo:
+  #   image: mongo:latest
+  #   restart: unless-stopped
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo_data:/data/db
 
   server:
     build: 
@@ -45,6 +42,6 @@ services:
       - caddy_config:/config
 
 volumes:
-  mongo_data:
+  # mongo_data:
   caddy_data:
   caddy_config:
