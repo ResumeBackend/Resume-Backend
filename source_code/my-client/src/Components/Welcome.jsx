@@ -43,7 +43,7 @@ const Welcome = (props) => {
             responseType: 'blob', // Treat response as binary data
           });
     
-          // Create a URL for the blob response and initiate download
+          // Create a URL for the  blob response and initiate download
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url;
