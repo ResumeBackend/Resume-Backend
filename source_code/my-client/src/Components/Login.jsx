@@ -171,7 +171,6 @@ export default function Login(props) {
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
-        height: '100vh'
         }}>
             <p style={{ fontSize:'30px', fontWeight:'100'}}>{authMode.toUpperCase()}</p>
                     <form>

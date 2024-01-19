@@ -8,7 +8,8 @@ import MyRouter from './MyRouter.jsx'
 
 const Main = () => {
   const [host, setHost] = useState("")
-  
+  // Set the background globally
+  document.body.style = 'background: #f0f0f0';
 
   // get host from text file
 fetch(raw)
@@ -39,7 +40,7 @@ fetch(raw)
     {/* Navbar section */}
     
     <BrowserRouter>
-    <div style={{ backgroundColor: '#f0f0f0' }} >
+    <div >
       <MyRouter host = {host} getToken = {getToken} setToken = {setToken}></MyRouter>
       </div>
     </BrowserRouter>

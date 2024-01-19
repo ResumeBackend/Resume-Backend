@@ -7,7 +7,6 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 const axios = require('axios')
-const { ObjectId } = require('mongodb');
 
 //Backend routes (endpoints)
 const host = process.env.BASE_URL
@@ -161,15 +160,28 @@ router.post('/authorize_musicbox', async(req,res) => {
 
     if (user) {
       // Compare the provided password with the stored hashed password
-      const passwordMatch = bcrypt.compare(pass, user.password);
+      bcrypt.compare(pass, user.password).then((resl) => {
+        if (resl) {
+          // Insure the authenticated user has linked their spotify
+          if (user.refresh_token)
+          {
+            // Passwords match, return the refresh_token
+            res.send(user.refresh_token)
+          }
+          else
+          {
+            // User has not yet linked spotify
+            res.status(202).send("User has not linked Spotify!")
+          }
+          
+        } else {
+          // Passwords don't match
+          res.status(401).send("Unauthorized")
+        }
 
-      if (passwordMatch) {
-        // Passwords match, return the refresh_token
-        res.send(user.refresh_token)
-      } else {
-        // Passwords don't match
-        res.status(401).send("Unauthorized")
-      }
+      })
+
+      
     } else {
       // User not found
       res.status(404).send("User not found")
@@ -184,6 +196,11 @@ router.post('/authorize_musicbox', async(req,res) => {
 router.get('/auth-callback', async(req, res) => {
   const code = req.query.code;
   const state = req.query.state;
+
+  if (!state)
+  {
+    res.status(400).send("Bad Request")
+  }
   const split = state.indexOf('uid')
 
   const redir = state.substring(0, split)
