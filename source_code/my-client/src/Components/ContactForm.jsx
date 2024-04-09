@@ -71,12 +71,12 @@ const ContactForm = (props) => {
     flexDirection: 'column',
     }}>
         <img src = 'email.png' alt="email icon" width= "100px"></img>
-        <p style={{ fontSize:'30px', fontWeight:'100', color: 'rgb(92, 119, 226)', textAlign: 'center'}}>LET'S GET IN TOUCH.</p>
+        <p style={{ fontSize:'30px', fontWeight:'100', textAlign: 'center'}}>LET'S GET IN TOUCH.</p>
         <div >
             <form onSubmit={handleSubmit} >
-              <input style = {{margin:'5px', border: '1px solid black'}}type="text" class='form-control  'value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required />
-              <input style = {{margin:'5px', border: '1px solid black'}}type="email" class='form-control  'value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)"/>
-              <textarea style = {{margin:'5px', border: '1px solid black', height: '200px'}}class='form-control  'value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Your message" required />
+              <input style = {{margin:'5px'}}type="text" class='form-control  'value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required />
+              <input style = {{margin:'5px'}}type="email" class='form-control  'value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)"/>
+              <textarea style = {{margin:'5px', height: '200px'}}class='form-control  'value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Your message" required />
               <button type="submit" class="btn btn-light">Send Message</button>
             </form>
         </div>

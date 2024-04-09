@@ -179,7 +179,7 @@ const Projects = (props) => {
     {
         let form = new FormData()
         form.set('image', document.getElementById('image').files[0])
-        form.set('token', sessionStorage.getItem('id')) // for auth
+        form.set('token', localStorage.getItem('id')) // for auth
         form.set('html', projectHtml)
 
         let im = ""
@@ -311,7 +311,7 @@ const Projects = (props) => {
     {
         return(
             <>
-            <h3 onClick= {sessionStorage.getItem('admin') === 'true' ? editProject: null} style={{display: "inline", cursor: 'pointer', fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>{project.title.toUpperCase()}</h3>
+            <h3 onClick= {localStorage.getItem('admin') === 'true' ? editProject: null} style={{display: "inline", cursor: 'pointer', fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>{project.title.toUpperCase()}</h3>
 
             {/* Inject project html here */}
             <div class = 'ql-editor'id = "projectHtml" style = {{width: '80%'}} dangerouslySetInnerHTML={{ __html: project.html.replace('/inventory" rel="noopener noreferrer" target="_blank"', '/inventory" rel="noopener noreferrer" target="_self"') }}></div>
@@ -361,7 +361,7 @@ const Projects = (props) => {
 
                     <div class="header">
                         <div class="left-section">
-                            <span id="editIcon" class="icon" onClick={editPost} style={{display: sessionStorage.getItem('admin') === 'true' ? 'inline-block': 'none'}}>Edit</span>
+                            <span id="editIcon" class="icon" onClick={editPost} style={{display: localStorage.getItem('admin') === 'true' ? 'inline-block': 'none'}}>Edit</span>
                         </div>
                         <div class="right-section">
                             <span id="closeIcon" class="icon" onClick={closeViewModal}>Close</span>
@@ -430,7 +430,7 @@ const Projects = (props) => {
         <h3 style={{display: 'inline', fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>PETER BUONAIUTO</h3>
 
         {/* Admins get a new project button */}
-        <div id="newproject" style={{ top: '-2rem', position: 'relative', width: '100%', float:'right', display: sessionStorage.getItem('admin') === 'true' ? "inline-block" : "none" }}>
+        <div id="newproject" style={{ top: '-2rem', position: 'relative', width: '100%', float:'right', display: localStorage.getItem('admin') === 'true' ? "inline-block" : "none" }}>
             <button type="button" className="btn btn-light" id = "new-project-btn" onClick = {newProject}>New Project</button>
         </div>
 

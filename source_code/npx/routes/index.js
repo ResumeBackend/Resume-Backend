@@ -148,93 +148,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// From ESP, get the refresh token from DB 
-router.post('/authorize_musicbox', async(req,res) => {
-  const username = req.body.username;
-  const pass = req.body.pass
-
-  // bcrypt compare
-  try {
-    // Find the user by username
-    const user = await User.findOne({ username });
-
-    if (user) {
-      // Compare the provided password with the stored hashed password
-      bcrypt.compare(pass, user.password).then((resl) => {
-        if (resl) {
-          // Insure the authenticated user has linked their spotify
-          if (user.refresh_token)
-          {
-            // Passwords match, return the refresh_token
-            res.send(user.refresh_token)
-          }
-          else
-          {
-            // User has not yet linked spotify
-            res.status(202).send("User has not linked Spotify!")
-          }
-          
-        } else {
-          // Passwords don't match
-          res.status(401).send("Unauthorized")
-        }
-
-      })
-
-      
-    } else {
-      // User not found
-      res.status(404).send("User not found")
-    }
-  } catch (error) {
-    console.log(error)
-    res.status(500).send("500 Server error")
-  }
-})
-
-// Login with spotify
-router.get('/auth-callback', async(req, res) => {
-  const code = req.query.code;
-  const state = req.query.state;
-
-  if (!state)
-  {
-    res.status(400).send("Bad Request")
-  }
-  const split = state.indexOf('uid')
-
-  const redir = state.substring(0, split)
-  const uid = state.substring(split + 3, state.length)
-  
-    if (code && state) {
-      const response = await axios.post('https://accounts.spotify.com/api/token', null, {
-        params: {
-          grant_type: 'authorization_code',
-          code,
-          client_id: process.env.SPOTIFY_CLIENT,
-          redirect_uri: `${host}/auth-callback`
-        },
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        auth: {
-          username: process.env.SPOTIFY_CLIENT,
-          password: process.env.SPOTIFY_SECRET, // Replace with your actual client secret
-        },
-      });
-      // We don't need to store the access token, because it only lasts an hour
-      const refreshToken = response.data.refresh_token;
-      User.findOneAndUpdate({'_id': uid}, {'refresh_token': refreshToken})
-
-      res.redirect(redir+"?state=success")
-
-      // Store the access token (e.g., in state or a context)
-      // Redirect or perform other actions as needed
-    } else {
-      res.redirect(redir+"?state=fail")
-    }
-      
-})
 
 // Download resume
 router.get('/download/resume', (req, res) => {
@@ -395,13 +308,23 @@ function updateAccount(req, res)
     }
     else
     {
-
-      User.findOneAndUpdate({'username': req.body.oldUsername}, {'username': req.body.username, 'password': hashedPassword})
+      User.findOneAndUpdate({'username': req.body.oldUsername, '_id': req.body.id}, {'username': req.body.username, 'password': hashedPassword})
       .then(function(value) 
       {
-        // THIS IS THE RESPONSE THE CLIENT WILL GET!
-        res.json({ id: value?._id}) 
+        if (value)
+        {
+          // THIS IS THE RESPONSE THE CLIENT WILL GET!
+          res.json({ id: value._id}) 
+        }
+        else
+        {
+          res.status(400).send("Bad request")
+        }
       })
+      .catch(function(err) {
+        console.error("Error during findOneAndUpdate:", err);
+        // Handle the error appropriately
+      });
 
     }})
   

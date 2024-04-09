@@ -35,7 +35,7 @@ const Inventory = (props) => {
     // used to note them as the author when posting
     function storeID()
     {
-        setid(sessionStorage.getItem('id'))
+        setid(localStorage.getItem('id'))
     }
 
     //get the username of the creator of this item

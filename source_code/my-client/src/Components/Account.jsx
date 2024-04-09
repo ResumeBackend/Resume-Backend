@@ -146,10 +146,9 @@ const Account = (props) =>
             display: 'flex',
             alignItems: 'center',
             flexDirection: 'column',
-            
             paddingTop: '20px'
         }}>
-            <p style={{ fontSize:'30px', fontWeight:'100', color: 'rgb(92, 119, 226)'}}>MODIFY ACCOUNT</p>
+            <p style={{ fontSize:'30px', fontWeight:'100'}}>MODIFY ACCOUNT</p>
                 <form>
                     <div className="form-group">
                         <label style = {{marginLeft:'5px', color: 'gray'}}>Username</label>

@@ -42,7 +42,7 @@ const Blog = forwardRef((props, ref) => {
     // TODO: Call this to add a new post, which will refresh after
     async function addPost(title, text) // date calculated in API
     {
-        const post = {title: title, text: text, project_id: project._id, token: sessionStorage.getItem('id')}
+        const post = {title: title, text: text, project_id: project._id, token: localStorage.getItem('id')}
         await axios.post(`${host}/addPost`, post)
         .then(function (response) {
         //finally...
@@ -61,7 +61,7 @@ const Blog = forwardRef((props, ref) => {
     // Edit a post
     async function editPost(title, text, id) // date calculated in API
     {
-        const post = {title: title, text: text, id: id, token: sessionStorage.getItem('id')}
+        const post = {title: title, text: text, id: id, token: localStorage.getItem('id')}
         await axios.post(`${host}/editPost`, post)
         .then(function (response) {
         //finally...
@@ -118,7 +118,7 @@ const Blog = forwardRef((props, ref) => {
         {/* The admin new post button and the BLOG title text*/}
         <div id = "blog-header">
             <h3 style={{marginLeft: '0.1vw', margin: 'auto', fontWeight: '50', color: 'gray'}}>BLOG</h3>
-            <div id="newproject" style={{ marginLeft: 'auto', display: sessionStorage.getItem('admin') === 'true' ? "flex" : "none" }}>
+            <div id="newproject" style={{ marginLeft: 'auto', display: localStorage.getItem('admin') === 'true' ? "flex" : "none" }}>
                 <button type="button" className="btn btn-outline-secondary" id = "new-project-btn" onClick = {newPost}>New Post</button>
             </div>
         </div>

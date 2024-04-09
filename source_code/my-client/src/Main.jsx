@@ -22,13 +22,17 @@ fetch(raw)
   // store username and id locally.. username for display, id for auth
   function setToken(username, id) {
     // Store the username as a token to display and allow logged-in-features
-    sessionStorage.setItem('username', username);
-    sessionStorage.setItem('id', id);
+    localStorage.setItem('username', username);
+    if (id)
+    {
+      localStorage.setItem('id', id);
+    }
+    
   }
   
   // Get token: Returns the username token (not the id)
   function getToken() {
-    return sessionStorage.getItem('username');
+    return localStorage.getItem('username');
   }
 
 

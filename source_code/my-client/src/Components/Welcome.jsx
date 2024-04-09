@@ -4,28 +4,59 @@ import React, { useState} from "react";
 const Welcome = (props) => {
     // eslint-disable-next-line
     const [joke, setJoke] = useState("")
+    const [loaded, setLoaded] = useState(false)
     //get joke from Joke API
 
     const [adaptability, setAdaptability] = useState("Starting and operating a business alone had a large learning curve. I was required to learn a large degree of legal, marketing, estimation, scheduling, accounting, efficiency, customer relations and many more skills in order to achieve and maintain success. With regards to software, college forced my hand to independently learn many languages quickly, as well as various topics such as algorithms, hardware, software development, web, databases, theory etc. Regardless of the topics, I'm able to quickly pick up a new skill and excel at it.")
     const [timemanagement, setTimemanagement] = useState("During college, I learned to balance school work, programming projects, and my construction company. I also take down time seriously, as I feel a healthy balance is what keeps my creativity flowing, and prevents burnout.")
     const [interpersonal, setInterpersonal] = useState("Proficient in developing and maintaining positive client and employee relationships. Leveraged exceptional interpersonal skills from running my company through delivery of highly respected customer service and satisfaction. As a result, received consistent positive feedback and built a reputation for effective communication and collaboration. I'm excited to bring these same relationship-building abilities to the software industry!")
-    const [leadership, setLeadership] = useState("I led my Master's project, organizing and conducting meetings, assigning tasks, developing ideas and plans, as well as keeping the team on track and jumping in when members needed help. This project was the only one selected from the class to be displayed at the University Showcase. Additionally, owning and operating my construction company requires imense leadership and responsibility to manage all of the jobs, sub contractors, clients and maitenance. ")
+    const [leadership, setLeadership] = useState("I led a few software projects, most notably DocXtract, organizing and conducting meetings, assigning tasks, developing ideas and plans, as well as keeping the team on track and jumping in when members needed help. This project was the only one selected from the class to be displayed at the University Showcase. Additionally, owning and operating my construction company requires imense leadership and responsibility to manage all of the jobs, sub contractors, clients and maitenance. I was a Teaching Assistant for Intro to Computer Science at UAlbany, and created many software projects on my own.")
     const [skill, setSkill] = useState(leadership)
     const [about, setAbout] = useState("I studied physics, neuroscience & python at Binghamton University, and then continued my study of Computer Science at University at Albany. I made Dean's list every semester of college, and have a minor in Mathematics. I graduated a year early with a 4.0 GPA in 2023, and will earn my Masters this upcoming Spring.")
 
-    // Load skill data
-    axios.get(`${props.host}/getData`)
-    .then((res) => {
-        let content = res.data[0]
-        setAdaptability(content['adaptability'])
-        setTimemanagement(content['time'])
-        setInterpersonal(content['interpersonal'])
-        setLeadership(content['leadership'])
-        setAbout(content['about'])
-    })
-    .catch((e) => {
-        console.log(e)
-    })
+
+    // Load data if not yet loaded
+    if (!loaded)
+    {
+        setLoaded(true)
+
+        // Do we have it saved for this session?
+        let content = JSON.parse(sessionStorage.getItem('content'));
+
+        // If the value has not been set, fetch it and store it
+        if (content === null || content === undefined) {
+            axios.get(`${props.host}/getData`)
+            .then((res) => {
+                content = res.data[0] // Store it from the api
+
+                // Store the content in sessionStorage
+                sessionStorage.setItem('content', JSON.stringify(content))
+
+                // Store the content in state
+                setAdaptability(content['adaptability'])
+                setTimemanagement(content['time'])
+                setInterpersonal(content['interpersonal'])
+                setLeadership(content['leadership'])
+                setAbout(content['about'])
+            })
+            .catch((e) => {
+                console.log(e)
+            })
+        } // end content fetch
+        else
+        {
+            // Content was already locally stored so update the react state with its values
+            setAdaptability(content['adaptability'])
+            setTimemanagement(content['time'])
+            setInterpersonal(content['interpersonal'])
+            setLeadership(content['leadership'])
+            setAbout(content['about'])
+        }
+
+    }
+
+    
+
 
     // eslint-disable-next-line
     async function getJoke()
