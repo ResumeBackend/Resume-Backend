@@ -7,10 +7,34 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 const axios = require('axios')
+const cron = require('node-cron')
 
 //Backend routes (endpoints)
 const host = process.env.BASE_URL
 router.use(express.static(path.join(__dirname, '../public')));
+
+let latest;
+  
+const urlToPing = process.env.PING_URL;
+ 
+const pingUrl = () => {
+  axios.get(urlToPing)
+    .then((res) => {
+      latest = res.data
+      
+    })
+    .catch((error) => {
+      setTimeout(pingUrl, 2000); // Retry after 2 seconds
+    });
+};
+
+cron.schedule('*/10 * * * *', pingUrl);
+pingUrl();
+
+// Ensure alive
+router.get('/ping', async(req, res) => {
+  res.json(Date.now())
+})
 
 // Get the date
 function getDate()
