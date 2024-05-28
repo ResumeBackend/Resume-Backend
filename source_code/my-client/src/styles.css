@@ -51,7 +51,7 @@ width:400px;
 	padding-top: 15px;
 	padding-right: 15px;
 	display:inline-block;
-	overflow-y:auto;
+	overflow-y:hidden;
 }
 
 #content
@@ -116,12 +116,17 @@ width:400px;
 
 
 #card {
-width: 27rem;
+
 height: 16rem;
  
  transition: transform .2s;
 
 }
+
+.grid-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(27rem, 1fr));
+  }
 
 #inventory-card {
 	width: 16rem;
@@ -243,15 +248,11 @@ ul.navbar {
 	overflow: hidden;
   }
 
-  ul.navbar li {
-	float: left;
-  }
-
   ul.navbar li a {
 	display: block;
 	color: gray; /* Set default text color */
 	text-align: center;
-	padding: 14px 16px;
+	padding: 12px 12px;
 	text-decoration: none;
   }
 
@@ -265,6 +266,45 @@ ul.navbar {
 	font-weight: 600;
   }
 
+  /* Laptop styles */
+  @media (min-width: 600px) {
+	.navbar-container {
+		justify-content: flex-end;
+	}
+
+	.laptop-only {
+		display: inline;
+		font-weight: 100;
+		color: gray;
+		margin-left: 10px;
+		position: relative;
+		top: -4.2rem;
+	  }
+	#resume {
+		margin-top: 5%;
+	}
+  }
+
+  /* Mobil Styles */
+  @media(max-width: 600px) {
+	.navbar-container {
+		justify-content: space-around;
+	}
+	.navbar {
+		width: 90%;
+	}
+	.laptop-only {
+		display: none;
+	  }
+	  #introduction {
+		flex-direction: column;
+		margin: 30px;
+	  }
+	
+
+  }
+
+
   .navbar-container {
 	display: flex;
 	justify-content: flex-end;
@@ -275,20 +315,20 @@ ul.navbar {
 
   #welcome
   {
-	position: relative;
-	left:100px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 15px
   }
 
   #introduction
   {
 	display:flex;
+	flex: 1;
+	justify-content: space-between;
 	margin-right: 10px;
   }
-  #sub-welcome
-  {
-	position: relative;
-	left:-125px;
-  }
+
 
   #project-preview
   {

@@ -42,6 +42,20 @@ const Projects = (props) => {
     const maxDescLength = 200
     const [descLength, setDescLength] = useState(0)
 
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
 
 
     // use effect - set project when mounts 
@@ -311,16 +325,22 @@ const Projects = (props) => {
     {
         return(
             <>
-            <h3 onClick= {localStorage.getItem('admin') === 'true' ? editProject: null} style={{display: "inline", cursor: 'pointer', fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>{project.title.toUpperCase()}</h3>
+            <h3 class = "laptop-only" onClick= {localStorage.getItem('admin') === 'true' ? editProject: null}>{project.title.toUpperCase()}</h3>
 
             {/* Inject project html here */}
-            <div class = 'ql-editor'id = "projectHtml" style = {{width: '80%'}} dangerouslySetInnerHTML={{ __html: project.html.replace('/inventory" rel="noopener noreferrer" target="_blank"', '/inventory" rel="noopener noreferrer" target="_self"') }}></div>
+            <div class = 'ql-editor'id = "projectHtml"  style = {{width: screenWidth > 600 ? '80%' : "100%"}}dangerouslySetInnerHTML={{ __html: project.html.replace('/inventory" rel="noopener noreferrer" target="_blank"', '/inventory" rel="noopener noreferrer" target="_self"') }}></div>
 
 
             {/* To the right side we need to display this blog */}
-            <div id = "blog">
-                <Blog ref = {BlogRef} viewPost = {viewPost} newPost = {newPostClicked} host = {host} project={project}></Blog>
-            </div>
+            {
+                screenWidth > 600 &&
+                (
+                    <div id = "blog">
+                        <Blog ref = {BlogRef} viewPost = {viewPost} newPost = {newPostClicked} host = {host} project={project}></Blog>
+                    </div>
+                )
+            }
+            
 
             {/* New post modal */}
             <div id="newPostModal" class="modal">
@@ -427,7 +447,7 @@ const Projects = (props) => {
     // UI FOR PROJECT NAVIGATION MENU
     else return(
     <div>
-        <h3 style={{display: 'inline', fontWeight: '100', color: 'gray', marginLeft: '10px', position: 'relative', top: "-4.2rem"}}>PETER BUONAIUTO</h3>
+        <h3 class = "laptop-only">PETER BUONAIUTO</h3>
 
         {/* Admins get a new project button */}
         <div id="newproject" style={{ top: '-2rem', position: 'relative', width: '100%', float:'right', display: localStorage.getItem('admin') === 'true' ? "inline-block" : "none" }}>
@@ -463,7 +483,7 @@ const Projects = (props) => {
             </div>
         </div>
 
-        <div>
+        <div className="grid-container">
             {projectComponents}
         </div>
     </div>

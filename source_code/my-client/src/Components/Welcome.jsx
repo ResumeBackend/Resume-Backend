@@ -123,18 +123,17 @@ const Welcome = (props) => {
     }
 
     return(
-    <div>
+    <div style = {{display: "flex", flexDirection: "column", justifyContent: "space-between"}}>
         <div id = "introduction">
             <div id = "welcome">
                 <img id = "logo" src="icon.png" width= "200px" alt="logo"></img>
-                <div id = "sub-welcome">
-                    <img id = "helloworld" src = "hello3.gif" alt="gif"></img>
+                <div style = {{marginTop: "20px"}}>
+                    <img id = "helloworld" src = "helloworld.gif" alt="gif"></img>
                     {/* <img width = "270" alt = "top langs"src = "https://github-readme-stats-git-masterrstaa-rickstaa.vercel.app/api/top-langs/?username=peterb2396&theme=default&layout=compact"></img> */}
                 </div>    
 
-                
-
             </div>
+            
             <div id = "about-me">
                 <div style = {{display: 'inline-block'}}>
                     <p class= 'blue-underline'style = {{fontSize: '25px', fontWeight: '100'}}>ABOUT ME</p>
@@ -149,7 +148,7 @@ const Welcome = (props) => {
 
         </div>
 
-        <div id="resume" style = {{marginLeft: '20px', position:'relative', top:'-100px'}}>
+        <div id="resume" style = {{marginLeft: '20px'}}>
             <div style = {{display: 'block'}}>
                 <div style = {{display: 'inline-block'}}>
                     <p class= 'blue-underline'style = {{fontSize: '25px', fontWeight: '100'}}>SKILLS</p>

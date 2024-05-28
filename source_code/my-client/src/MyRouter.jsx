@@ -12,6 +12,7 @@ import { Routes, Route } from "react-router-dom";
 import Nav from './Components/Nav.jsx';
 import Projects from './Components/Projects.jsx';
 import ContactForm from './Components/ContactForm.jsx';
+import DeleteAccount from './Components/DeleteAccount.jsx';
 
 const MyRouter = ({host, getToken, setToken}) => {
    
@@ -29,16 +30,9 @@ const MyRouter = ({host, getToken, setToken}) => {
           <Route path="projects" element={<Projects host = {host}/>} />
           <Route path="projects/:projectId" element={<Projects host = {host} project = {JSON.parse(sessionStorage.getItem('project'))}/>} />
           <Route path = "upload" element = {(sessionStorage.getItem('admin') === "false")? (<Welcome token = {getToken} host = {host}/>): <Upload host = {host}/>}/>
+          <Route path="delete-account" element={<DeleteAccount/>} />
       </Routes>
     
-    <div id = 'socials'>
-      <a class = 'social' href="https://github.com/peterb2396" target="_blank" rel="noreferrer">
-        <img src="github.png"  width = "30px"alt = "github"></img>
-      </a>
-      <a class = 'social' href="https://www.instagram.com/built.by.peter/" target="_blank" rel="noreferrer">
-        <img src="insta.png"  width = "30px"alt = "instagram"></img>
-      </a>
-    </div>
       
     
     </>
