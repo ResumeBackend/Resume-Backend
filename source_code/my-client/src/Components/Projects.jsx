@@ -485,7 +485,7 @@ const Projects = (props) => {
             </div>
         </div>
 
-        <div className="grid-container">
+        <div style = {{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(27rem, 1fr))"}}>
             {projectComponents}
         </div>
     </div>
