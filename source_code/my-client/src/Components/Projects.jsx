@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import FormData from 'form-data';
 
+import '../styles.css';
+
 // React quill import
 import ReactQuill from "react-quill"
 import 'quill-video-embed';

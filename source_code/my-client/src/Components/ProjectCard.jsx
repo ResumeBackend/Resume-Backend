@@ -17,7 +17,8 @@ const ProjectCard = props => {
                     <div className="card-header">{(props.project.title)? props.project.title : "Project Name"}</div>
                     <div className="card-body text-secondary">
                         <div id = "project-preview">
-                            <img src = {props.project.icon} alt = "Item" width = "150px" height = "150px" id = "card-img"
+                            {/* eslint-disable-next-line */}
+                            <img src = {props.project.icon} alt = "Loading Image..." width = "150px" height = "150px" id = "card-img"
                             onError={event => {
                                 // Load the default image
                                 event.target.src = "default-img.jpg"
