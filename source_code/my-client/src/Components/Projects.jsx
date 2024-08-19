@@ -96,23 +96,46 @@ const Projects = (props) => {
       }, [projectId]); // Empty array will execute effect during mount
 
     // Get the projects from DB
-    async function getProjects()
-    {
+    async function getProjects() {
         await axios.get(`${host}/getProjects`)
-        .then((response) => {
-            
-            let projects= []
-            response.data.forEach((project, index) => 
-            {
-                projects.push({_id: project._id, title: project.title, date:project.date, description: project.description, icon: project.icon, html: project.html})
+            .then((response) => {
+                let projects = response.data.map(project => {
+                    // Convert priority to a number. If it can't be converted, default to Infinity.
+                    const priority = isNaN(Number(project.priority)) ? Infinity : Number(project.priority);
+    
+                    return {
+                        _id: project._id,
+                        title: project.title,
+                        date: project.date,
+                        description: project.description,
+                        icon: project.icon,
+                        html: project.html,
+                        priority: priority
+                    };
+                });
+    
+                // Sort projects based on the numeric priority. 0 should be last.
+                projects.sort((a, b) => {
+                    // Handle cases where priority is Infinity (originally non-numeric)
+                    if (a.priority === Infinity) return 1;
+                    if (b.priority === Infinity) return -1;
+    
+                    // Handle the priority 0 case, which should be at the end
+                    if (a.priority === 0) return 1;
+                    if (b.priority === 0) return -1;
+    
+                    return a.priority - b.priority;
+                });
+    
+                refreshList(projects); // Populate the list with our items array from DB
             })
-            
-            refreshList(projects); // Populate the list with our items array from DB
-          })
-        .catch((res) => {
-            console.log(res)
-        })
+            .catch((res) => {
+                console.log(res);
+            });
     }
+    
+    
+    
 
     // Show the loaded projects in a list
     function refreshList(projects) {
@@ -448,47 +471,59 @@ const Projects = (props) => {
 
     // UI FOR PROJECT NAVIGATION MENU
     else return(
-    <div>
-        <h3 class = "laptop-only">PETER BUONAIUTO</h3>
-
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', margin: 0, padding: 0 }}>
+        {/* Title */}
+        <h3 className="laptop-only" style = {{width: "50%"}}>PETER BUONAIUTO</h3>
+        
         {/* Admins get a new project button */}
-        <div id="newproject" style={{ top: '-2rem', position: 'relative', width: '100%', float:'right', display: localStorage.getItem('admin') === 'true' ? "inline-block" : "none" }}>
-            <button type="button" className="btn btn-light" id = "new-project-btn" onClick = {newProject}>New Project</button>
-        </div>
-
+        {localStorage.getItem('admin') === 'true' && (
+            <div id="newproject" style={{ marginBottom: '20px' }}>
+                <button type="button" className="btn btn-light" id="new-project-btn" onClick={newProject}>
+                    New Project
+                </button>
+            </div>
+        )}
+    
+        {/* Loading */}
+        {!projectComponents?.length && (
+            <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', height: "60vh", width: "100%" }}>
+                <img alt="loading" src="loading.gif" />
+            </div>
+        )}
+    
         {/* New project modal */}
-        <div id="myModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onClick={closeModal}>&times;</span>
-                <label for="image">Image:</label>
-                <input  class="form-control" type="file" id="image" accept="image/*"></input>
+        <div id="myModal" className="modal">
+            <div className="modal-content">
+                <span className="close" onClick={closeModal}>&times;</span>
+                <label htmlFor="image">Image:</label>
+                <input className="form-control" type="file" id="image" accept="image/*" />
                 
-                <label for="title">Title:</label>
-                <input  class="form-control" type="text" id="title"></input>
+                <label htmlFor="title">Title:</label>
+                <input className="form-control" type="text" id="title" />
                 
-                <label for="description">Description:</label>
-                <textarea  class="form-control" id="description"></textarea>
-
-                {/* Quill Content  */}
-                <h3 style={{ marginTop: '20px', fontWeight: '100'}}>Project Page</h3>
+                <label htmlFor="description">Description:</label>
+                <textarea className="form-control" id="description"></textarea>
+    
+                {/* Quill Content */}
+                <h3 style={{ marginTop: '20px', fontWeight: '100' }}>Project Page</h3>
                 <ReactQuill
-                        theme='snow'
-                        value={projectHtml}
-                        onChange={setProjectHtml}
-                        style={{minHeight: '200px', marginTop: '5px'}}
-                        modules={{
-                            toolbar: toolbarOptions
-                          }}
-                    />
+                    theme='snow'
+                    value={projectHtml}
+                    onChange={setProjectHtml}
+                    style={{ minHeight: '200px', marginTop: '5px' }}
+                    modules={{ toolbar: toolbarOptions }}
+                />
                 
                 <button type="button" onClick={addProject}>Submit</button>
             </div>
         </div>
-
-        <div style = {{width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(27rem, 1fr))"}}>
+    
+        {/* Project components */}
+        <div style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(27rem, 1fr))" }}>
             {projectComponents}
         </div>
     </div>
+    
     )
 }
 

@@ -1,69 +1,80 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import './styles.css';
-import React, {useState} from 'react';
-import raw from "./host.txt"
-import { BrowserRouter } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import raw from "./host.txt";
+import { BrowserRouter, useLocation } from "react-router-dom";
 
-import MyRouter from './MyRouter.jsx'
+import MyRouter from './MyRouter.jsx';
+
+const SocialLinks = () => {
+  const location = useLocation();
+  const shouldRenderSocials = ! location.pathname.includes('/projects/');
+
+  return shouldRenderSocials ? (
+    <div id='socials'>
+      <a className='social' href="https://github.com/peterb2396" target="_blank" rel="noreferrer">
+        <img src="github.png" width="30px" alt="github" />
+      </a>
+      <a className='social' href="https://www.instagram.com/built.by.peter/" target="_blank" rel="noreferrer">
+        <img src="insta.png" width="30px" alt="instagram" />
+      </a>
+    </div>
+  ) : null;
+};
+
+const ScrollToTopOnRouteChange = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (pathname.includes("/projects/"))
+      window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null; // This component doesn't render anything
+};
 
 const Main = () => {
-  const [host, setHost] = useState("")
+  const [host, setHost] = useState("");
+
   // Set the background globally
-  document.body.style = 'background: #f0f0f0';
+  useEffect(() => {
+    document.body.style.background = '#f0f0f0';
+  }, []);
 
-  // get host from text file
-fetch(raw)
- .then(r => r.text())
- .then(text => {
-  var copy = (' ' + text).slice(1);
-  setHost(copy)
-});
+  // Get host from text file
+  useEffect(() => {
+    fetch(raw)
+      .then(r => r.text())
+      .then(text => {
+        const copy = text.trim();
+        setHost(copy);
+      });
+  }, []);
 
-  // store username and id locally.. username for display, id for auth
-  function setToken(username, id) {
-    // Store the username as a token to display and allow logged-in-features
+  // Store username and id locally
+  const setToken = (username, id) => {
     localStorage.setItem('username', username);
-    if (id)
-    {
+    if (id) {
       localStorage.setItem('id', id);
     }
-    
-  }
-  
-  // Get token: Returns the username token (not the id)
-  function getToken() {
+  };
+
+  // Get token: Returns the username token
+  const getToken = () => {
     return localStorage.getItem('username');
-  }
+  };
 
+  if (!host) return null;
 
-   
-  if (host)
-    // If linking account, don't include header or footer.
-    return (
-      <>
-    {/* Navbar section */}
-    
+  return (
     <BrowserRouter>
-    <div >
-      <MyRouter host = {host} getToken = {getToken} setToken = {setToken}></MyRouter>
+      <div>
+      <ScrollToTopOnRouteChange />
+        <MyRouter host={host} getToken={getToken} setToken={setToken} />
+        <SocialLinks /> {/* Render social links based on pathname */}
       </div>
     </BrowserRouter>
-    
-    {(
-    <div id = 'socials'>
-      <a class = 'social' href="https://github.com/peterb2396" target="_blank" rel="noreferrer">
-        <img src="github.png"  width = "30px"alt = "github"></img>
-      </a>
-      <a class = 'social' href="https://www.instagram.com/built.by.peter/" target="_blank" rel="noreferrer">
-        <img src="insta.png"  width = "30px"alt = "instagram"></img>
-      </a>
-    </div>)}
-    
-    </>
-  
-
-    )
-
-}
+  );
+};
 
 export default Main;

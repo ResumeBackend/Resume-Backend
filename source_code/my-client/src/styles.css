@@ -47,7 +47,7 @@ width:400px;
 
 
 #card-border{
-	padding-left: 25px;
+	padding-left: 15px;
 	padding-top: 15px;
 	padding-right: 15px;
 	display:inline-block;
@@ -384,10 +384,11 @@ ul.navbar {
 	border: 1px solid gray;
 	position: fixed;
   	right: 0px;
-	top: 10vh;
-	height:85vh;
+	bottom: 1vh;
+	top: 100px;
 	background-color: #f4f4f4;
 	padding-top: 5px;
+	border-radius: 10px;
 }
 
 #posts
@@ -402,11 +403,13 @@ ul.navbar {
 #post
 {
 	border-radius: 5%;
-	border: 1px dashed gray;
+	border: 1px;
 	transition: transform 0.2s ease-in-out;
   	cursor: pointer;
 	position: relative;
-	margin:8px
+	margin:8px;
+	padding: 3px;
+	background-color: rgb(221, 220, 220);
 }
 
 #post:hover {
