@@ -308,6 +308,9 @@ ul.navbar {
 	#welcome {
 		margin-bottom: 100px;
 	}
+	#card-desc {
+		font-size: 15px;
+	}
 	
 
   }
