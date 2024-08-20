@@ -283,23 +283,31 @@ ul.navbar {
 	#resume {
 		margin-top: 5%;
 	}
+	#welcome {
+		margin: 20px;
+	}
   }
 
   /* Mobil Styles */
   @media(max-width: 600px) {
 	.navbar-container {
-		justify-content: space-around;
+		/* Centers the navbar items instead of to the rightside. */
+		justify-content: center;
 	}
 	.navbar {
+		display: flex;
 		width: 90%;
 	}
 	.laptop-only {
 		display: none;
 	  }
-	  #introduction {
+	#introduction {
 		flex-direction: column;
 		margin: 30px;
-	  }
+	}
+	#welcome {
+		margin-bottom: 100px;
+	}
 	
 
   }
@@ -307,7 +315,6 @@ ul.navbar {
 
   .navbar-container {
 	display: flex;
-	justify-content: flex-end;
 	position:relative;
 	top: 10px;
   }
@@ -318,7 +325,7 @@ ul.navbar {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin: 15px
+	
   }
 
   #introduction
@@ -326,7 +333,7 @@ ul.navbar {
 	display:flex;
 	flex: 1;
 	justify-content: space-between;
-	margin-right: 10px;
+	
   }
 
 

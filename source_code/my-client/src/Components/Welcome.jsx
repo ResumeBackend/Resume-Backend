@@ -122,64 +122,63 @@ const Welcome = (props) => {
         }
     }
 
-    return(
-    <div style = {{display: "flex", flexDirection: "column", justifyContent: "space-between"}}>
-        <div id = "introduction">
-            <div id = "welcome">
-                <img id = "logo" src="icon.png" width= "200px" alt="logo"></img>
-                <div style = {{marginTop: "20px"}}>
-                    <img id = "helloworld" src = "helloworld.gif" alt="gif"></img>
-                    {/* <img width = "270" alt = "top langs"src = "https://github-readme-stats-git-masterrstaa-rickstaa.vercel.app/api/top-langs/?username=peterb2396&theme=default&layout=compact"></img> */}
-                </div>    
-
+    return (
+        <div style={{ display: "flex", flexDirection: "column", minHeight: "calc(100vh - 90px)" }}>
+          <div id="introduction" style={{ display: 'flex', justifyContent: 'left', padding: '20px' }}>
+            <div id="welcome">
+              <img id="logo" src="icon.png" width="200px" alt="logo" />
+              <div style={{ marginTop: "20px" }}>
+                <img id="helloworld" src="helloworld.gif" alt="gif" />
+              </div>
             </div>
-            
-            <div id = "about-me">
-                <div style = {{display: 'inline-block'}}>
-                    <p class= 'blue-underline'style = {{fontSize: '25px', fontWeight: '100'}}>ABOUT ME</p>
-                </div>
-                <p>I'm {getAge()} years old from Long Island, New York.</p>
-                <p>{about}</p>
-                <p style = {{display: 'inline'}} >I aquired experience in project management and business through my construction company, </p> <a href= 'https://www.instagram.com/built.by.peter/' target="_blank" rel="noreferrer" style = {{display: 'inline', color: 'black', fontStyle: 'oblique'}}>Built By Peter LLC</a>
-                <p style = {{display: 'inline'}}>, which I began operations at 14 and incorporated at 18. Whether it be building homes or software, I've always had a passion for creativity and production of things that are enjoyable to others.</p>
-            
+      
+            <div style={{ maxWidth: "1000px" }}>
+              <div style={{ display: 'inline-block' }}>
+                <p className="blue-underline" style={{ fontSize: '25px', fontWeight: '100' }}>ABOUT ME</p>
+              </div>
+              <p>I'm {getAge()} years old from Long Island, New York.</p>
+              <p>{about}</p>
+              <p style={{ display: 'inline' }}>
+                I acquired experience in project management and business through my construction company, 
+              </p> 
+              <a href='https://www.instagram.com/built.by.peter/' target="_blank" rel="noreferrer" style={{ display: 'inline', color: 'black', fontStyle: 'oblique' }}>
+                Built By Peter LLC
+              </a>
+              <p style={{ display: 'inline' }}>
+                , which I began operations at 14 and incorporated at 18. Whether it be building homes or software, I've always had a passion for creativity and production of things that are enjoyable to others.
+              </p>
             </div>
-            
-
+          </div>
+      
+          <div id="resume" style={{ marginLeft: '20px', marginTop: 'auto' }}>
+            <div style={{ display: 'block' }}>
+              <div style={{ display: 'inline-block' }}>
+                <p className='blue-underline' style={{ fontSize: '25px', fontWeight: '100' }}>SKILLS</p>
+              </div>
+            </div>
+      
+            <div style={{ display: 'flex' }}>
+              <div style={{ borderRight: '1px solid gray', paddingRight: '20px' }}>
+                <ul className="skills">
+                  <li><p className='skill-listing active' onClick={(e) => { setSkill(leadership); setActive(e.currentTarget); }}>Leadership</p></li>
+                  <li><p className='skill-listing' onClick={(e) => { setSkill(interpersonal); setActive(e.currentTarget); }}>Interpersonal</p></li>
+                  <li><p className='skill-listing' onClick={(e) => { setSkill(adaptability); setActive(e.currentTarget); }}>Adaptability</p></li>
+                  <li><p className='skill-listing' onClick={(e) => { setSkill(timemanagement); setActive(e.currentTarget); }}>Time Management</p></li>
+                </ul>
+              </div>
+      
+              <div style={{ display: "inline", margin: '20px', fontStyle: 'italic', width: '70%' }}>
+                {/* Here is the skill content */}
+                {skill}
+              </div>
+            </div>
+      
+            <button style={{ float: 'right', margin: '10px' }} type="button" className="btn btn-outline-primary" onClick={handleDownload}>Download Resume</button>
+          </div>
         </div>
-
-        <div id="resume" style = {{marginLeft: '20px'}}>
-            <div style = {{display: 'block'}}>
-                <div style = {{display: 'inline-block'}}>
-                    <p class= 'blue-underline'style = {{fontSize: '25px', fontWeight: '100'}}>SKILLS</p>
-                </div>
-            </div>
-
-            <div style = {{display: 'flex'}}>
-                <div style = {{borderRight: '1px solid gray', paddingRight: '20px'}}>
-                    <ul class="skills">
-                        <li><p class = 'skill-listing active' onClick={(e) => {setSkill(leadership); setActive(e.currentTarget)} }>Leadership</p></li>
-                        <li><p class = 'skill-listing' onClick={(e) => {setSkill(interpersonal); setActive(e.currentTarget)}}>Interpersonal</p></li>
-                        <li><p class = 'skill-listing' onClick={(e) => {setSkill(adaptability); setActive(e.currentTarget)}}>Adaptability</p></li>
-                        <li><p class = 'skill-listing' onClick={(e) => {setSkill(timemanagement); setActive(e.currentTarget)}}>Time Management</p></li>
-                    </ul>
-                </div>
-
-                <div style = {{display: "inline", margin:'20px', fontStyle:'italic', width: '70%'}}>
-                    {/* Here is the skill content */}
-                    {skill}
-                </div>
-
-            </div>
-
-            <button style= {{float: 'right', marginRight: '10px'}}type="button" className="btn btn-outline-primary" onClick = {handleDownload}>Download Resume</button>
-
-        </div>
-        
-
-    </div>
-
-    )
+      );
+      
+      
 }
 
 export default Welcome;
