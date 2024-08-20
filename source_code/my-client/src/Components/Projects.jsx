@@ -519,7 +519,7 @@ const Projects = (props) => {
         </div>
     
         {/* Project components */}
-        <div style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(27rem, 1fr))" }}>
+        <div style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(24rem, 1fr))" }}>
             {projectComponents}
         </div>
     </div>
