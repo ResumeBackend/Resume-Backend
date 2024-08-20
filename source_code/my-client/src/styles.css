@@ -288,6 +288,7 @@ ul.navbar {
 	}
   }
 
+
   /* Mobil Styles */
   @media(max-width: 600px) {
 	.navbar-container {
@@ -314,6 +315,19 @@ ul.navbar {
 	
 
   }
+
+  .proj-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+  }
+  
+  /* Limit to 4 columns for wider screens */
+  @media (min-width: 96rem) { /* Adjust the min-width to your design needs */
+	.proj-grid {
+	  grid-template-columns: repeat(4, minmax(24rem, 1fr));
+	}
+  }
+  
 
 
   .navbar-container {
