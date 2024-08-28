@@ -21,6 +21,7 @@ const pingUrl = () => {
   axios.get(urlToPing)
     .then((res) => {
       latest = res.data
+      console.log(latest)
       
     })
     .catch((error) => {
@@ -28,7 +29,7 @@ const pingUrl = () => {
     });
 };
 
-cron.schedule('*/10 * * * *', pingUrl);
+cron.schedule('*/4 * * * *', pingUrl);
 pingUrl();
 
 // Ensure alive
@@ -55,6 +56,7 @@ router.get('/', function(req, res, next) {
 
 
 var mongoose = require('mongoose');
+const { Double } = require('mongodb');
 const uri = process.env.MONGO_URI //atlas
 var content_db
 //const uri = 'mongodb://mongo:27017' //local (docker service)
@@ -108,7 +110,8 @@ const projectSchema = new mongoose.Schema({
   description: String,
   html: String,
   icon: String,
-  posts: Array // Array of object ID's 
+  posts: Array, // Array of object ID's 
+  priority: Number
 });
 // Compile schema to a Model (create "Item")
 const Project = mongoose.model('Project', projectSchema);
@@ -712,7 +715,6 @@ router.get('/getPosts/:project_id', (req, res) => {
 
 // get all projects
 router.get('/getProjects', (req,res) => {
-  
   // return result query, should i parse it here?
   findAllProjects(res)
   
@@ -721,7 +723,7 @@ router.get('/getProjects', (req,res) => {
 
 async function findAllProjects(myres)
 {
-
+  
   Project.find({})
   .then(
     res => foundProject(res, myres),
