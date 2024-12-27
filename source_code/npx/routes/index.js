@@ -125,9 +125,55 @@ const postSchema = new mongoose.Schema({
 // Compile schema to a Model (create "Item")
 const Post = mongoose.model('Post', postSchema);
 
+const reviewSchema = new mongoose.Schema({
+  name: String,
+  review: String,
+});
+// Compile schema to a Model (create "Item")
+const Review = mongoose.model('Review', reviewSchema);
+
 
 
 //API endpoints
+
+// Built By Peter code
+router.get('/getReviews', (req, res) => {
+  Review.find({})
+  .then((result) => {
+    res.json(result)
+  }
+  )
+  .catch((error) => {
+    console.error('Error retrieving reviews:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  })
+})
+
+router.post('/addReview', (req, res) => {
+  if (req.body.password != process.env.REVIEW_PWD)
+  {
+    res.status(403)
+    res.json("Unauthorized")
+    return
+  }
+
+  const review = new Review({
+    name: req.body.name,
+    review: req.body.review,
+    
+  });
+  review.save()
+  .then(() => {
+    res.json('Review added!');
+  })
+  .catch((error) => {
+    console.error('Error saving new review:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+  );
+});
+
+
 
 
 // Image reception handling
