@@ -13,6 +13,7 @@ import Nav from './Components/Nav.jsx';
 import Projects from './Components/Projects.jsx';
 import ContactForm from './Components/ContactForm.jsx';
 import DeleteAccount from './Components/DeleteAccount.jsx';
+import AddReview from './Components/AddReview.jsx';
 
 const MyRouter = ({host, getToken, setToken}) => {
    
@@ -30,6 +31,7 @@ const MyRouter = ({host, getToken, setToken}) => {
           <Route path="projects" element={<Projects host = {host}/>} />
           <Route path="projects/:projectId" element={<Projects host = {host} project = {JSON.parse(sessionStorage.getItem('project'))}/>} />
           <Route path = "upload" element = {(sessionStorage.getItem('admin') === "false")? (<Welcome token = {getToken} host = {host}/>): <Upload host = {host}/>}/>
+          <Route path = "addReview" element = {(sessionStorage.getItem('admin') === "false")? (<Welcome token = {getToken} host = {host}/>): <AddReview host = {host}/>}/>
           <Route path="delete-account" element={<DeleteAccount/>} />
       </Routes>
     
