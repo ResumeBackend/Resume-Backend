@@ -164,6 +164,26 @@ router.post('/addReview', (req, res) => {
   });
   review.save()
   .then(() => {
+
+    // Email message options
+    const mailOptions = {
+      from: process.env.MAILER_USER,
+      to: process.env.MAILER_DEST,
+      subject: `NEW REVIEW POSTED (${req.body.name})`,
+      text: req.body.review,
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('Error sending email:', error);
+        res.status(500).json({ message: 'Failed to send the email' });
+      } else {
+        console.log('Email sent:', info.response);
+        res.status(200).json({ message: 'Email sent successfully' });
+      }
+    });
+    
     res.json('Review added!');
   })
   .catch((error) => {
@@ -300,7 +320,7 @@ router.post('/send-email', (req, res) => {
     from: process.env.MAILER_USER,
     to: process.env.MAILER_DEST,
     subject: 'New Message from Contact Form',
-    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    text: `Name: ${name}\nContact: ${email}\nMessage: ${message}`,
   };
 
   // Send the email
