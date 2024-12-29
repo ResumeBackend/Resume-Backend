@@ -13,7 +13,7 @@ const AddReview = (props) => {
     const formData = {
         name: name,
         review: review,
-        pwd: pwd,
+        password: pwd,
       };
     axios.post(`${props.host}/addReview`, formData)
     .then(function (response) {
