@@ -29,7 +29,7 @@ const pingUrl = () => {
     });
 };
 
-cron.schedule('*/4 * * * *', pingUrl);
+cron.schedule('*/10 * * * *', pingUrl);
 pingUrl();
 
 // Ensure alive
