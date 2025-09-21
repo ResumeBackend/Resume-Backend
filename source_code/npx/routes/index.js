@@ -4,7 +4,6 @@ const multer = require("multer");
 const path = require('path');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
-const nodemailer = require('nodemailer');
 require('dotenv').config();
 const axios = require('axios')
 const cron = require('node-cron')
@@ -132,6 +131,17 @@ const reviewSchema = new mongoose.Schema({
 // Compile schema to a Model (create "Item")
 const Review = mongoose.model('Review', reviewSchema);
 
+function sendMail(from, to, subject, text)
+{
+  axios.post('https://server.153home.online/sendMail', {
+    from: from,
+    to: to,
+    subject: subject,
+    text: text,
+    password: process.env.MAILER_PASS
+  })
+}
+
 
 
 //API endpoints
@@ -173,16 +183,9 @@ router.post('/addReview', (req, res) => {
       text: req.body.review,
     };
 
-    // Send the email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log('Error sending email:', error);
-        res.status(500).json({ message: 'Failed to send the email' });
-      } else {
-        console.log('Email sent:', info.response);
-        res.status(200).json({ message: 'Email sent successfully' });
-      }
-    });
+    sendMail(mailOptions.from, mailOptions.to, mailOptions.subject, mailOptions.text)
+
+   
     
     res.json('Review added!');
   })
@@ -231,15 +234,7 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-// NODE MAILER
-// Set up Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: 'Gmail',
-  auth: {
-    user: process.env.MAILER_USER,
-    pass: process.env.MAILER_PASS,
-  },
-});
+
 
 
 // Download resume
@@ -323,16 +318,8 @@ router.post('/send-email', (req, res) => {
     text: `Name: ${name}\nContact: ${email}\nMessage: ${message}`,
   };
 
-  // Send the email
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log('Error sending email:', error);
-      res.status(500).json({ message: 'Failed to send the email' });
-    } else {
-      console.log('Email sent:', info.response);
-      res.status(200).json({ message: 'Email sent successfully' });
-    }
-  });
+  sendMail(mailOptions.from, mailOptions.to, mailOptions.subject, mailOptions.text)
+
 });
 
 router.post('/login', login);
